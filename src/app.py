@@ -1,32 +1,18 @@
-from flask import Flask, url_for, request
+from flask import Flask
 
-app = Flask(__name__)
-
-@app.route("/")
-def hello_world():
-    return "<p>Hello, World!</p>"
-
-@app.route('/bemvindo/<usuario>/<int:idade>/<float:altura>')
-def bem_vindo(usuario, idade, altura):
-    return {
-        "Usuario": usuario,
-        "Idade": idade,
-        "Altura": altura,
-    }
-
-@app.route('/projects/')
-def projects():
-    return 'The project page'
-
-@app.route('/about/', methods=["GET","POST"])
-def about():
-    if request.method == "GET":
-        return 'This is a GET'
+def create_app(test_config=None):
+    app = Flask(__name__, instance_relative_config=True)
+    app.config.from_mapping(
+        SECRET_KEY='dev',
+        DATABASE='diobank.sqlite',
+    )
+    
+    if test_config is None:
+        app.config.from_pyfile('config.py', silent=True)
     else:
-        return 'This is a POST'
+        app.config.from_mapping(test_config)
 
-with app.test_request_context():
-    print(url_for('hello_world'))
-    print(url_for('bem_vindo', usuario="Wagner", idade=45, altura=1.73))
-    print(url_for('about', next='/'))
-    print(url_for('projects'))
+    from . import db
+    db.init_app(app)
+    
+    return app

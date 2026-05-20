@@ -5,6 +5,7 @@ description = ""
 authors = [
     {name = "Wagner Muniz Camargo",email = "camargowm@saude.sc.gov.br"}
 ]
+package-mode = false
 requires-python = ">=3.13"
 dependencies = [
     "flask"
